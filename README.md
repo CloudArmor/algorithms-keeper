@@ -2,7 +2,7 @@
 
 # algorithms-keeper
 [![CI](https://github.com/CloudArmor/algorithms-keeper/actions/workflows/main.yml/badge.svg)](https://github.com/CloudArmor/algorithms-keeper/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/CloudArmor/algorithms-keeper/branch/master/graph/badge.svg?token=QYAZ665UJL)](https://codecov.io/gh/CloudArmor/algorithms-keeper)
+[![codecov](https://codecov.io/gh/CloudArmor/algorithms-keeper/branch/master/graph/badge.svg?token=1DQZGVOBEK)](https://codecov.io/gh/CloudArmor/algorithms-keeper)
 [![code style: black](https://img.shields.io/static/v1?label=code%20style&message=black&color=black)](https://github.com/psf/black)
 [![Checked with mypy](https://img.shields.io/static/v1?label=mypy&message=checked&color=2a6db2&labelColor=505050)](http://mypy-lang.org/)
 
