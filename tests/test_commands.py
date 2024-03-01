@@ -2,7 +2,6 @@ from typing import Any, Generator
 
 import pytest
 from gidgethub.sansio import Event
-from pytest import MonkeyPatch
 
 from algorithms_keeper import utils
 from algorithms_keeper.constants import Label
@@ -29,8 +28,8 @@ from .utils import (
 
 @pytest.fixture(scope="module", autouse=True)
 def patch_module(
-    monkeypatch: MonkeyPatch = MonkeyPatch(),
-) -> Generator[MonkeyPatch, None, None]:
+    monkeypatch: pytest.MonkeyPatch = pytest.MonkeyPatch(),
+) -> Generator[pytest.MonkeyPatch, None, None]:
     async def mock_get_file_content(*args: Any, **kwargs: Any) -> bytes:
         filename = kwargs["file"].name
         if filename in {
@@ -83,7 +82,7 @@ def test_command_regex_match(text: str, group: str) -> None:
 
 # Reminder: ``Event.delivery_id`` is used as a short description for the respective
 # test case and as a way to id the specific test case in the parametrized group.
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 @pytest.mark.parametrize(
     "event, gh, expected",
     (
@@ -152,7 +151,11 @@ def test_command_regex_match(text: str, group: str) -> None:
                         "author_association": "MEMBER",
                         "body": "@algorithms-keeper review",
                     },
-                    "issue": {"pull_request": {"url": pr_url}},
+                    "issue": {
+                        "pull_request": {
+                            "url": pr_url,
+                        }
+                    },
                 },
                 event="issue_comment",
                 delivery_id="review_command",
@@ -162,7 +165,8 @@ def test_command_regex_match(text: str, group: str) -> None:
                     pr_url: {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user},
+                        "user": {"login": user, "type": "User"},
+                        "author_association": "MEMBER",
                         "labels": [],
                         "draft": False,
                     },
@@ -188,7 +192,11 @@ def test_command_regex_match(text: str, group: str) -> None:
                         "author_association": "MEMBER",
                         "body": "@algorithms-keeper review-all",
                     },
-                    "issue": {"pull_request": {"url": pr_url}},
+                    "issue": {
+                        "pull_request": {
+                            "url": pr_url,
+                        }
+                    },
                 },
                 event="issue_comment",
                 delivery_id="review_all_command",
@@ -200,7 +208,8 @@ def test_command_regex_match(text: str, group: str) -> None:
                         "html_url": html_pr_url,
                         "issue_url": issue_url,
                         "head": {"sha": sha},
-                        "user": {"login": user},
+                        "user": {"login": user, "type": "User"},
+                        "author_association": "MEMBER",
                         "comments_url": comments_url,
                         "labels": [],
                         "draft": False,

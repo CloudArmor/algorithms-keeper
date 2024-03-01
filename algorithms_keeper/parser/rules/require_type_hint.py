@@ -7,15 +7,14 @@ MISSING_TYPE_HINT: str = "Please provide type hint for the parameter: `{nodename
 
 MISSING_RETURN_TYPE_HINT: str = (
     "Please provide return type hint for the function: `{nodename}`. "
-    + "**If the function does not return a value, please provide "
-    + "the type hint as:** `def function() -> None:`"
+    "**If the function does not return a value, please provide "
+    "the type hint as:** `def function() -> None:`"
 )
 
 IGNORE_PARAM: set[str] = {"self", "cls"}
 
 
 class RequireTypeHintRule(CstLintRule):
-
     VALID = [
         Valid(
             """

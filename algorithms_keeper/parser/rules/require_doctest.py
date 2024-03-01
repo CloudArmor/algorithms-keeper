@@ -8,14 +8,13 @@ from fixit import ValidTestCase as Valid
 
 MISSING_DOCTEST: str = (
     "As there is no test file in this pull request nor any test function or class in "
-    + "the file `{filepath}`, please provide doctest for the function `{nodename}`"
+    "the file `{filepath}`, please provide doctest for the function `{nodename}`"
 )
 
 INIT: str = "__init__"
 
 
 class RequireDoctestRule(CstLintRule):
-
     VALID = [
         # Module-level docstring contains doctest.
         Valid(
@@ -151,6 +150,14 @@ class RequireDoctestRule(CstLintRule):
                     pass
             """
         ),
+        # No doctest required in the ``web_programming`` directory.
+        Valid(
+            """
+            def foo():
+                pass
+            """,
+            filename="web_programming/foo.py",
+        ),
     ]
 
     INVALID = [
@@ -177,7 +184,7 @@ class RequireDoctestRule(CstLintRule):
                     pass
             """
         ),
-        # Check that `_skip_doctest` attribute is reseted after leaving the class.
+        # Check that `_skip_doctest` attribute is reset after leaving the class.
         Invalid(
             """
             def bar():
@@ -204,6 +211,9 @@ class RequireDoctestRule(CstLintRule):
         self._skip_doctest: bool = False
         self._temporary: bool = False
 
+    def should_skip_file(self) -> bool:
+        return self.context.file_path.match("web_programming/*")
+
     def visit_Module(self, node: cst.Module) -> None:
         self._skip_doctest = self._has_testnode(node) or self._has_doctest(node)
 
@@ -211,7 +221,7 @@ class RequireDoctestRule(CstLintRule):
         # Temporary storage of the ``skip_doctest`` value only during the class visit.
         # If the class-level docstring contains doctest, then the checks should only be
         # skipped for all its methods and not for other functions/class in the module.
-        # After leaving the class, ``skip_doctest`` should be resetted to whatever the
+        # After leaving the class, ``skip_doctest`` should be reset to whatever the
         # value was before.
         self._temporary = self._skip_doctest
         self._skip_doctest = self._has_doctest(node)
