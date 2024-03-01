@@ -70,22 +70,21 @@ async def main(request: web.Request) -> web.Response:
         event = Event.from_http(request.headers, body, secret=secret)
         if event.event == "ping":
             logger.debug("Received ping event")
-            return web.Response(status=200)
-        logger.info(
-            "event=%s delivery_id=%s",
-            f"{event.event}:{event.data['action']}",
-            event.delivery_id,
-        )
+            return web.Response(status=200, text="pong")
+        event_info = f"{event.event}:{event.data['action']}"
+        logger.info("event=%s delivery_id=%s", event_info, event.delivery_id)
         async with ClientSession() as session:
             gh = GitHubAPI(
                 installation_id=event.data["installation"]["id"],
                 session=session,
-                requester="CloudArmor/algorithms-keeper",
+                requester="TheAlgorithms/algorithms-keeper",
                 cache=cache,
             )
             # Give GitHub some time to reach internal consistency.
             await asyncio.sleep(1)
-            logger.debug("Callbacks: %r", main_router.fetch(event))
+            if logger.isEnabledFor(logging.DEBUG):
+                callbacks = [func.__name__ for func in main_router.fetch(event)]
+                logger.debug("event=%s callbacks=%s", event_info, callbacks)
             await main_router.dispatch(event, gh)
         if gh.rate_limit is not None:  # pragma: no cover
             logger.info(
@@ -93,7 +92,6 @@ async def main(request: web.Request) -> web.Response:
                 f"{gh.rate_limit.remaining}/{gh.rate_limit.limit}",
                 gh.rate_limit.reset_datetime - datetime.now(timezone.utc),
             )
-        logger.debug("status=200")
         return web.Response(status=200)
     except Exception as err:
         logger.exception(err)
