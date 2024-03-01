@@ -1,16 +1,16 @@
 <div align="center">
 
 # algorithms-keeper
-[![CI](https://github.com/TheAlgorithms/algorithms-keeper/actions/workflows/main.yml/badge.svg)](https://github.com/TheAlgorithms/algorithms-keeper/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/TheAlgorithms/algorithms-keeper/branch/master/graph/badge.svg?token=QYAZ665UJL)](https://codecov.io/gh/TheAlgorithms/algorithms-keeper)
+[![CI](https://github.com/CloudArmor/algorithms-keeper/actions/workflows/main.yml/badge.svg)](https://github.com/CloudArmor/algorithms-keeper/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/CloudArmor/algorithms-keeper/branch/master/graph/badge.svg?token=QYAZ665UJL)](https://codecov.io/gh/CloudArmor/algorithms-keeper)
 [![code style: black](https://img.shields.io/static/v1?label=code%20style&message=black&color=black)](https://github.com/psf/black)
 [![Checked with mypy](https://img.shields.io/static/v1?label=mypy&message=checked&color=2a6db2&labelColor=505050)](http://mypy-lang.org/)
 
 </div>
 
-A bot for [TheAlgorithms/Python](https://www.github.com/TheAlgorithms/Python) repository. This bot is based on [this tutorial](https://github-app-tutorial.readthedocs.io/en/latest/index.html) and also inspired by the ones working for the [CPython](https://github.com/python/cpython) repository which are [miss-islington](https://github.com/python/miss-islington), [bedevere](https://github.com/python/bedevere) and [the-knights-who-say-ni](https://github.com/python/the-knights-who-say-ni). This bot is basically a GitHub app which can be installed in any repository using [this link](https://github.com/apps/algorithms-keeper).
+A bot for [CloudArmor/PyAlgorithms](https://www.github.com/CloudArmor/PyAlgorithms) repository. This bot is based on [this tutorial](https://github-app-tutorial.readthedocs.io/en/latest/index.html) and also inspired by the ones working for the [CPython](https://github.com/python/cpython) repository which are [miss-islington](https://github.com/python/miss-islington), [bedevere](https://github.com/python/bedevere) and [the-knights-who-say-ni](https://github.com/python/the-knights-who-say-ni). This bot is basically a GitHub app which can be installed in any repository using [this link](https://github.com/apps/algorithms-keeper).
 
-***NOTE: This bot is highly configured for [TheAlgorithms/Python](https://www.github.com/TheAlgorithms/Python) repository. DO NOT INSTALL the bot without reading what it actually does.***
+***NOTE: This bot is highly configured for [CloudArmor/PyAlgorithms](https://www.github.com/CloudArmor/PyAlgorithms) repository. DO NOT INSTALL the bot without reading what it actually does.***
 
 ## What the bot does:
 
@@ -22,7 +22,7 @@ Open an issue with the message greeting the user who either installed the app or
 - To indicate the stage the pull request is currently at. This is a cycle of two labels which indicates the two stages: The pull request requires a review/re-review, or a maintainer has requested changes for the pull request.
 - To indicate whether the pull request contains merge conflicts or not.
 
-The pull request stages can be best described in a [graphviz](http://www.webgraphviz.com/) diagram whose code is in the [pull requests module](https://github.com/TheAlgorithms/algorithms-keeper/blob/master/algorithms_keeper/event/pull_request.py#L3).
+The pull request stages can be best described in a [graphviz](http://www.webgraphviz.com/) diagram whose code is in the [pull requests module](https://github.com/CloudArmor/algorithms-keeper/blob/master/algorithms_keeper/event/pull_request.py#L3).
 
 ### Close invalid pull requests
 A pull request is considered invalid if:

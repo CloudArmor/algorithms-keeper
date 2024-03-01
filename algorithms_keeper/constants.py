@@ -54,9 +54,9 @@ EMPTY_PR_BODY_COMMENT = """\
 @{user_login}, this pull request is being closed because the description is empty. \
 If you believe that this is being done by mistake, please read our \
 [Contributing guidelines]\
-(https://github.com/TheAlgorithms/Python/blob/master/CONTRIBUTING.md) before opening \
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/CONTRIBUTING.md) before opening \
 a new pull request with our [template]\
-(https://github.com/TheAlgorithms/Python/blob/master/.github/pull_request_template.md) \
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/.github/pull_request_template.md) \
 properly filled out. Thank you for your interest in our project.
 """
 
@@ -66,7 +66,7 @@ CHECKBOX_NOT_TICKED_COMMENT = """\
 @{user_login}, this pull request is being closed as none of the checkboxes have been \
 marked. It is important that you go through the checklist and mark the ones relevant \
 to this pull request. Please read the [Contributing guidelines]\
-(https://github.com/TheAlgorithms/Python/blob/master/CONTRIBUTING.md).
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/CONTRIBUTING.md).
 
 If you're facing any problem on how to mark a checkbox, please read the following \
 instructions:
@@ -84,7 +84,7 @@ INVALID_EXTENSION_COMMENT = """\
 @{user_login}, this pull request is being closed as the files submitted contains an \
 invalid extension. This repository only accepts Python algorithms. Please read the \
 [Contributing guidelines]\
-(https://github.com/TheAlgorithms/Python/blob/master/CONTRIBUTING.md) first.
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/CONTRIBUTING.md) first.
 
 Invalid files in this pull request: `{files}`
 """
@@ -98,9 +98,9 @@ PR_REVIEW_BODY = """\
 ## :link: Relevant Links
 ### Repository:
 - [Contributing guidelines]\
-(https://github.com/TheAlgorithms/Python/blob/master/CONTRIBUTING.md)
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/CONTRIBUTING.md)
 - [Project Euler solution guidelines]\
-(https://github.com/TheAlgorithms/Python/blob/master/project_euler/README.md)
+(https://github.com/CloudArmor/PyAlgorithms/blob/master/project_euler/README.md)
 ### Python:
 - [Formatted string literals (f-strings)]\
 (https://docs.python.org/3/tutorial/inputoutput.html#tut-f-strings)
