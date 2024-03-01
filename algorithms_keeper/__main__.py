@@ -77,7 +77,7 @@ async def main(request: web.Request) -> web.Response:
             gh = GitHubAPI(
                 installation_id=event.data["installation"]["id"],
                 session=session,
-                requester="TheAlgorithms/algorithms-keeper",
+                requester="CloudArmor/algorithms-keeper",
                 cache=cache,
             )
             # Give GitHub some time to reach internal consistency.
