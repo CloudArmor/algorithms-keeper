@@ -19,6 +19,7 @@ digraph "PR stages" {
   "Awaiting changes" -> "Approved" [label="Review approves", color=green]
 }
 """
+
 import asyncio
 import logging
 import re

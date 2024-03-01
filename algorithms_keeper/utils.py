@@ -12,6 +12,7 @@ The rest of the arguments must be keyword-only arguments. This is done to
 maintain consistency throughout the module and improve readability in files
 that uses all the given functions.
 """
+
 import urllib.parse
 from base64 import b64decode
 from dataclasses import dataclass
