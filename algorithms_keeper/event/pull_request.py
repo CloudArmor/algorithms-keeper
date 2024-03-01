@@ -116,11 +116,7 @@ async def close_invalid_or_additional_pr(
     """
     pull_request = event.data["pull_request"]
 
-    if (
-        pull_request["author_association"].lower() not in {"owner", "member"}
-        # Don't check for invalid pull request made by a bot.
-        and pull_request["user"]["type"].lower() != "bot"
-    ):
+    if pull_request["author_association"].lower() not in {"owner", "member"}:
         pr_body = pull_request["body"]
         pr_author = pull_request["user"]["login"]
         comment = None
@@ -183,13 +179,6 @@ async def check_pr_files(
     pull request is made ready for review, a new commit has been pushed to the
     pull request and when the pull request is reopened.
     """
-    # When a bot pushes a commit to a pull request, don't perform any file checks.
-    if (
-        event.data["action"] == "synchronize"
-        and event.data["sender"]["type"].lower() == "bot"
-    ):
-        return None
-
     pull_request = event.data["pull_request"]
 
     if pull_request["draft"]:
@@ -201,9 +190,7 @@ async def check_pr_files(
 
     # No need to perform these checks every time a commit is pushed.
     if event.data["action"] != "synchronize":
-        if pull_request["author_association"].lower() not in {"owner", "member"} and (
-            invalid_files := parser.validate_extension()
-        ):
+        if invalid_files := parser.validate_extension():
             await utils.close_pr_or_issue(
                 gh,
                 comment=INVALID_EXTENSION_COMMENT.format(
@@ -217,10 +204,6 @@ async def check_pr_files(
             await utils.add_label_to_pr_or_issue(
                 gh, label=label, pr_or_issue=pull_request
             )
-
-    # Don't perform file checks if the pull request is made by a bot.
-    if pull_request["user"]["type"].lower() == "bot":
-        return None
 
     # Default behavior is to ignore modified files but that can be changed.
     # This will come only from the commands module through the command:

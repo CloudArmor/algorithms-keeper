@@ -3,6 +3,7 @@ from urllib.parse import quote
 
 import pytest
 from gidgethub.sansio import Event
+from pytest import MonkeyPatch
 
 from algorithms_keeper import utils
 from algorithms_keeper.constants import Label
@@ -46,8 +47,8 @@ MAX_PR_TEST_ITEMS = [{"number": i} for i in range(1, MAX_PR_TEST_NUMBER + 2)]
 
 @pytest.fixture(scope="module", autouse=True)
 def patch_module(
-    monkeypatch: pytest.MonkeyPatch = pytest.MonkeyPatch(),
-) -> Generator[pytest.MonkeyPatch, None, None]:
+    monkeypatch: MonkeyPatch = MonkeyPatch(),
+) -> Generator[MonkeyPatch, None, None]:
     async def mock_get_file_content(*args: Any, **kwargs: Any) -> bytes:
         filename = kwargs["file"].name
         if filename in {
@@ -66,7 +67,7 @@ def patch_module(
     monkeypatch.undo()
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "event, gh, expected",
     # Pull request opened by the user, the bot found that the user has number of
@@ -80,7 +81,7 @@ def patch_module(
                     "pull_request": {
                         "url": pr_url,
                         "body": CHECKBOX_TICKED_UPPER,  # Case doesn't matter
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -91,7 +92,6 @@ def patch_module(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id=MAX_PR_TEST_ENABLED_ID,
@@ -130,7 +130,7 @@ def patch_module(
                         "url": pr_url,
                         "body": CHECKBOX_TICKED_UPPER,  # Case doesn't matter
                         "labels": [],
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "NONE",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -140,7 +140,6 @@ def patch_module(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id=MAX_PR_TEST_DISABLED_ID,
@@ -156,10 +155,7 @@ def patch_module(
     ids=parametrize_id,
 )
 async def test_max_pr_by_user(
-    monkeypatch: pytest.MonkeyPatch,
-    event: Event,
-    gh: MockGitHubAPI,
-    expected: ExpectedData,
+    monkeypatch: MonkeyPatch, event: Event, gh: MockGitHubAPI, expected: ExpectedData
 ) -> None:
     # There are only two possible cases for the ``MAX_PR_BY_USER`` constant:
     # - The value is some arbitrary positive number greater than 0.
@@ -176,7 +172,7 @@ async def test_max_pr_by_user(
     assert gh == expected
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "event, gh, expected",
     (
@@ -190,7 +186,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "body": "",
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -201,7 +197,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="non_draft_empty_pr_body",
@@ -230,7 +225,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "body": CHECKBOX_NOT_TICKED,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -241,7 +236,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="non_draft_empty_checklist",
@@ -270,7 +264,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "body": "",
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -281,7 +275,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="draft_empty_pr_body",
@@ -310,7 +303,7 @@ async def test_max_pr_by_user(
                         "body": CHECKBOX_TICKED,
                         "head": {"sha": sha},
                         "labels": [],
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "NONE",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -320,7 +313,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="invalid_extension_file",
@@ -358,7 +350,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "body": CHECKBOX_TICKED,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -369,7 +361,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="opened_in_draft_mode",
@@ -394,7 +385,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "body": CHECKBOX_TICKED,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "labels": [],
                         "author_association": "NONE",
                         "comments_url": comments_url,
@@ -405,7 +396,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="synchronize_in_draft_mode",
@@ -424,7 +414,7 @@ async def test_max_pr_by_user(
                         "url": pr_url,
                         "body": "",  # body can be empty for member
                         "labels": [],
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "MEMBER",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -434,7 +424,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="pr_opened_by_member",
@@ -445,70 +434,6 @@ async def test_max_pr_by_user(
                 post_url=[labels_url],
                 post_data=[{"labels": [Label.REVIEW]}],
             ),
-        ),
-        # Pull request opened by a bot, so don't perform any validation checks nor any
-        # file checks. This will be verified by keeping the pull request body empty.
-        (
-            Event(
-                data={
-                    "action": "opened",
-                    "pull_request": {
-                        "url": pr_url,
-                        "body": "",
-                        "labels": [],
-                        "user": {"login": "bot", "type": "Bot"},
-                        "author_association": "NONE",
-                        "comments_url": comments_url,
-                        "issue_url": issue_url,
-                        "html_url": html_pr_url,
-                        "requested_reviewers": [],
-                        "draft": False,
-                        "mergeable": True,
-                    },
-                    "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
-                },
-                event="pull_request",
-                delivery_id="pr_opened_by_bot",
-            ),
-            MockGitHubAPI(
-                getiter={
-                    files_url: [
-                        {
-                            "filename": "annotation.py",
-                            "contents_url": "",
-                            "status": "added",
-                        },
-                    ]
-                }
-            ),
-            # No file checks should be performed by the bot. This is validated by
-            # passing an invalid file in the mock data and no comment/label added
-            # to the pull request.
-            ExpectedData(
-                getiter_url=[files_url],
-                post_url=[labels_url],
-                post_data=[{"labels": [Label.REVIEW]}],
-            ),
-        ),
-        # Pull request synchronized by a bot, so don't perform any file checks.
-        (
-            Event(
-                data={
-                    "action": "synchronize",
-                    "pull_request": {
-                        "labels": [{"name": Label.REVIEW}],
-                        "draft": False,
-                        "mergeable": True,
-                    },
-                    "repository": {"full_name": repository},
-                    "sender": {"type": "Bot"},
-                },
-                event="pull_request",
-                delivery_id="pr_synchronized_by_bot",
-            ),
-            MockGitHubAPI(),
-            ExpectedData(),
         ),
         # Pull request synchronize event to test whether the add labels function gets
         # called if there are any labels to be added, post review comments gets called
@@ -524,7 +449,7 @@ async def test_max_pr_by_user(
                         # This got added when the pull request was opened.
                         "labels": [{"name": Label.REVIEW}, {"name": Label.TYPE_HINT}],
                         "head": {"sha": sha},
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "NONE",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -533,7 +458,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="add_require_label",
@@ -572,7 +496,7 @@ async def test_max_pr_by_user(
                         # The label was added when the PR was opened.
                         "labels": [{"name": Label.REVIEW}],
                         "head": {"sha": sha},
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "NONE",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -581,7 +505,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="add_type_label",
@@ -615,7 +538,7 @@ async def test_max_pr_by_user(
                         "body": CHECKBOX_TICKED,
                         "head": {"sha": sha},
                         "labels": [],
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "author_association": "NONE",
                         "comments_url": comments_url,
                         "issue_url": issue_url,
@@ -625,7 +548,6 @@ async def test_max_pr_by_user(
                         "mergeable": True,
                     },
                     "repository": {"full_name": repository},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="label_on_ready_for_review",
@@ -660,7 +582,6 @@ async def test_max_pr_by_user(
                         "author_association": "NONE",
                     },
                     "pull_request": {},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="review_comment_by_non_member",
@@ -679,7 +600,6 @@ async def test_max_pr_by_user(
                         "author_association": "MEMBER",
                     },
                     "pull_request": {},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="review_comment_by_member",
@@ -698,7 +618,6 @@ async def test_max_pr_by_user(
                         "author_association": "NONE",
                     },
                     "pull_request": {},
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="changes_requested_by_non_member",
@@ -719,7 +638,6 @@ async def test_max_pr_by_user(
                         "labels": [],
                         "issue_url": issue_url,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="changes_requested_by_member_no_label",
@@ -745,7 +663,6 @@ async def test_max_pr_by_user(
                         "labels": [{"name": Label.CHANGE}],
                         "issue_url": issue_url,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="changes_requested_with_change_label",
@@ -767,7 +684,6 @@ async def test_max_pr_by_user(
                         "labels": [{"name": Label.REVIEW}],
                         "issue_url": issue_url,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="changes_requested_with_review_label",
@@ -792,7 +708,6 @@ async def test_max_pr_by_user(
                         "labels": [{"name": Label.REVIEW}],
                         "issue_url": issue_url,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="approved_with_review_label",
@@ -813,7 +728,6 @@ async def test_max_pr_by_user(
                         "labels": [{"name": Label.CHANGE}],
                         "issue_url": issue_url,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request_review",
                 delivery_id="approved_with_change_label",
@@ -827,13 +741,12 @@ async def test_max_pr_by_user(
                 data={
                     "action": "synchronize",
                     "pull_request": {
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [{"name": Label.CHANGE}],
                         "draft": True,
                         "mergeable": True,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="no_label_in_draft_mode",
@@ -849,13 +762,12 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [{"name": Label.CHANGE}],
                         "draft": False,
                         "mergeable": True,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="review_label_after_changes_made",
@@ -878,7 +790,6 @@ async def test_max_pr_by_user(
                         "issue_url": issue_url,
                         "labels": [{"name": Label.REVIEW}],
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="remove_labels_on_pr_closed",
@@ -897,7 +808,6 @@ async def test_max_pr_by_user(
                         "issue_url": issue_url,
                         "labels": [{"name": Label.REVIEW}, {"name": Label.INVALID}],
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="remove_labels_on_invalid_pr_closed",
@@ -913,13 +823,12 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [{"name": Label.REVIEW}],
                         "draft": False,
                         "mergeable": None,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="mergeable_value_is_none",
@@ -948,13 +857,12 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [{"name": Label.REVIEW}],
                         "draft": False,
                         "mergeable": True,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="mergeable_value_is_true_no_label",
@@ -971,7 +879,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [
                             {"name": Label.REVIEW},
@@ -980,7 +888,6 @@ async def test_max_pr_by_user(
                         "draft": False,
                         "mergeable": True,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="mergeable_value_is_true_with_label",
@@ -1000,13 +907,12 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [{"name": Label.REVIEW}],
                         "draft": False,
                         "mergeable": False,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="mergeable_value_is_false_no_label",
@@ -1027,7 +933,7 @@ async def test_max_pr_by_user(
                     "pull_request": {
                         "url": pr_url,
                         "html_url": html_pr_url,
-                        "user": {"login": user, "type": "User"},
+                        "user": {"login": user},
                         "issue_url": issue_url,
                         "labels": [
                             {"name": Label.REVIEW},
@@ -1036,7 +942,6 @@ async def test_max_pr_by_user(
                         "draft": False,
                         "mergeable": False,
                     },
-                    "sender": {"type": "User"},
                 },
                 event="pull_request",
                 delivery_id="mergeable_value_is_false_with_label",

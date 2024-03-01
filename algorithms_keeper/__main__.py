@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, MutableMapping
@@ -14,11 +13,6 @@ from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 
 from algorithms_keeper.api import GitHubAPI
 from algorithms_keeper.event import main_router
-
-# TODO(dhruvmanila): Remove this block when it's the default.
-# https://github.com/Instagram/LibCST/issues/285#issuecomment-1011427731
-if sys.version_info >= (3, 10):
-    os.environ["LIBCST_PARSER_TYPE"] = "native"
 
 cache: MutableMapping[Any, Any] = LRUCache(maxsize=500)
 
@@ -42,14 +36,10 @@ STATIC_DIR = Path(__file__).parent / "static"
 
 @routes.get("/")
 async def index(_: web.Request) -> web.Response:
-    commit = os.getenv("RENDER_GIT_COMMIT", "???")
-    content = (
-        STATIC_DIR.joinpath("index.html")
-        .read_text()
-        .replace("{{ commit }}", commit)
-        .replace("{{ short_commit }}", commit[:7])
+    return web.Response(
+        body=STATIC_DIR.joinpath("index.html").read_text(),
+        content_type="text/html",
     )
-    return web.Response(body=content, content_type="text/html")
 
 
 @routes.get("/favicon.ico")
@@ -80,7 +70,7 @@ async def main(request: web.Request) -> web.Response:
             gh = GitHubAPI(
                 installation_id=event.data["installation"]["id"],
                 session=session,
-                requester="CloudArmor/algorithms-keeper",
+                requester="dhruvmanila/algorithms-keeper",
                 cache=cache,
             )
             # Give GitHub some time to reach internal consistency.

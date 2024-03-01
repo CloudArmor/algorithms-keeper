@@ -4,6 +4,7 @@ import aiohttp
 import pytest
 import pytest_asyncio
 from gidgethub import apps, sansio
+from pytest import MonkeyPatch
 
 from algorithms_keeper.api import GitHubAPI, token_cache
 
@@ -22,7 +23,7 @@ async def github_api() -> AsyncGenerator[GitHubAPI, None]:
     assert session.closed is True
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_initialization() -> None:
     async with aiohttp.ClientSession() as session:
         github_api = GitHubAPI(number, session, "algorithms-keeper")
@@ -34,10 +35,8 @@ async def test_initialization() -> None:
     assert github_api.requester == "algorithms-keeper"
 
 
-@pytest.mark.asyncio()
-async def test_access_token(
-    github_api: GitHubAPI, monkeypatch: pytest.MonkeyPatch
-) -> None:
+@pytest.mark.asyncio
+async def test_access_token(github_api: GitHubAPI, monkeypatch: MonkeyPatch) -> None:
     monkeypatch.setattr(apps, "get_installation_access_token", mock_return)
     monkeypatch.setenv("GITHUB_APP_ID", "")
     monkeypatch.setenv("GITHUB_PRIVATE_KEY", "")
@@ -50,7 +49,7 @@ async def test_access_token(
     assert cached_token == token
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_headers_and_log(github_api: GitHubAPI) -> None:
     request_headers = sansio.create_headers("algorithms-keeper")
     resp = await github_api._request(
